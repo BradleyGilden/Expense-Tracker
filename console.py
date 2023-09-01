@@ -32,6 +32,13 @@ class Console(BaseCmd):
             self.default("connect success")
             self.cursor = self.db.cursor()
             self.connect = True
+        self.cursor.execute("CREATE DATABASE IF NOT EXISTS expenses")
+        self.cursor.execute("USE expenses")
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS customers(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    vault DECIMAL(9, 2) DEFAULT 0.00
+);""")
 
     def do_show(self, line):
         """Display database information
@@ -47,7 +54,6 @@ class Console(BaseCmd):
                 self.cursor.execute("SHOW DATABASES;")
             else:
                 try:
-                    self.cursor.execute(f"USE {args[1]};")
                     self.cursor.execute("SHOW TABLES;")
                 except mysql.connector.Error:
                     print("please enter valid database name to view tables")
