@@ -14,9 +14,6 @@ class Console(BaseCmd):
     def __init__(self):
         """Constructor for the console class"""
         super().__init__()
-
-    def do_connect(self, line):
-        """Establishes connection to database"""
         excpt = False
         try:
             self.db = mysql.connector.connect(
@@ -30,14 +27,43 @@ class Console(BaseCmd):
             print(err)
             self.default("connect fail")
             excpt = True
+            self.connect = False
         if excpt is False:
             self.default("connect success")
             self.cursor = self.db.cursor()
+            self.connect = True
 
-    def do_setup(self, line):
-        """sets up database
+    def do_show(self, line):
+        """Display database information
         """
-        
+        args = line.split()
+        commands = {"tables", "databases"}
+        fetch = True
+
+        if args[0] not in commands:
+            print("Usage: show <tables|databases>")
+        else:
+            if args[0] == "databases":
+                self.cursor.execute("SHOW DATABASES;")
+            else:
+                try:
+                    self.cursor.execute(f"USE {args[1]};")
+                    self.cursor.execute("SHOW TABLES;")
+                except mysql.connector.Error:
+                    print("please enter valid database name to view tables")
+                    fetch = False
+            if fetch:
+                output = self.cursor.fetchall()
+                for rows in output:
+                    print(rows[0])
+
+    def do_quit(self, line):
+        """Quit command to exit the program
+        """
+        if self.connect:
+            self.cursor.close()
+            self.db.close()
+        return True
 
 
 if __name__ == '__main__':
