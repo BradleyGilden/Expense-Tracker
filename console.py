@@ -77,6 +77,20 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         login.append(getpass.getpass("\033[32mEnter password: "))
         return login
 
+    def setup(self):
+        """creates necessary table and database
+        """
+        self.cursor.execute("CREATE DATABASE IF NOT EXISTS expenses")
+        self.cursor.execute("USE expenses")
+        self.cursor.execute("""CREATE TABLE IF NOT EXISTS customers(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    vault DECIMAL(9, 2) DEFAULT 0.00
+);""")
+
+    def do_reset(self, line):
+        """deletes all tables in the database"""
+
     def do_quit(self, line):
         """Quit command to exit the program
         """
