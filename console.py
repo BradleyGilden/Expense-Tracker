@@ -25,7 +25,7 @@ class Console(BaseCmd):
             )
         except (Exception, mysql.connector.Error) as e:
             err = f"""\033[41m Database Connection Failed:\033[47m\033[30m{e} \
-\033[0m\n\033[31mPlease check password, hostname, username and most 
+\033[0m\n\033[31mPlease check password, hostname, username and most
 imporatantly if mysql service is running e.g sudo service mysql status"""
             print(err)
             self.default("connect fail")
