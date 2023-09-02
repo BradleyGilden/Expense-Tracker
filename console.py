@@ -4,6 +4,7 @@ This module contains the main interface of the Expense-Tracker
 Author: Bradley Gilden
 """
 import mysql.connector
+import getpass
 BaseCmd = __import__("base-cmd").BaseCmd
 
 
@@ -73,7 +74,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         print("\n\033[42m************* Mysql Login **************\033[0m\n")
         login.append(input("\033[32mEnter hostname: "))
         login.append(input("\033[32mEnter user: "))
-        login.append(input("\033[32mEnter password: "))
+        login.append(getpass.getpass("\033[32mEnter password: "))
         return login
 
     def do_quit(self, line):
