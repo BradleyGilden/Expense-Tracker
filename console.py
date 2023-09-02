@@ -66,7 +66,8 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
 
     @staticmethod
     def generate_login() -> list:
-        """accepts user login details for mysql database"""
+        """accepts user login details for mysql database
+        """
         login = []
 
         print("\n\033[42m************* Mysql Login **************\033[0m\n")
