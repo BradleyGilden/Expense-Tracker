@@ -36,22 +36,16 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
             self.cursor = self.db.cursor()
         Console.setup(self)
 
-    def do_show(self, line):
-        """Display database information
+    def do_db(self, line):
+        """directly manipulate database
         """
-        args = line.split()
-        commands = {"tables", "databases"}
-
-        if args[0] not in commands:
-            print("Usage: show <tables|databases>")
-        else:
-            if args[0] == "databases":
-                self.cursor.execute("SHOW DATABASES;")
-            else:
-                self.cursor.execute("SHOW TABLES;")
-                output = self.cursor.fetchall()
-                for rows in output:
-                    print(rows[0])
+        try:
+            self.cursor.execute(line)
+            output = self.cursor.fetchall()
+            for row in output:
+                print(row[0])
+        except mysql.connector.errors.Error as e:
+            print(f"\033[31m{e}\033[0m")
 
     @staticmethod
     def generate_login() -> list:
@@ -62,6 +56,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         print("\n\033[42m************* Mysql Login **************\033[0m\n")
         login.append(input("\033[32mEnter hostname: "))
         login.append(input("\033[32mEnter user: "))
+        # Nanospartan@117
         login.append(getpass.getpass("\033[32mEnter password: "))
         return login
 
@@ -72,7 +67,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         self.cursor.execute("USE expenses")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS customers(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(50),
+    name VARCHAR(50) NOT NULL,
     vault DECIMAL(9, 2) DEFAULT 0.00
 );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS transactions(
@@ -85,7 +80,12 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
 );""")
 
     def do_reset(self, line):
-        """deletes all tables in the database"""
+        """deletes all table entries in a database
+        """
+        self.cursor.execute("DROP TABLE transactions;")
+        self.cursor.execute("DROP TABLE customers;")
+        self.db.commit()
+        Console.setup(self)
 
     def do_quit(self, line):
         """Quit command to exit the program
