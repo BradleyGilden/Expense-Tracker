@@ -79,6 +79,10 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 );""")
 
+    @staticmethod
+    def store_init():
+        """initializes stores and store items"""
+
     def do_reset(self, line):
         """deletes all table entries in a database
         """
