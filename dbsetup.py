@@ -121,8 +121,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
                 print(f"\033[31mInvalid store name: {args[1]}\033[0m")
                 self.default("fail 0")
             else:
+                maxw = max(len(i) for i in DBSetup.store_dict[args[1]].keys())
                 for key, value in DBSetup.store_dict[args[1]].items():
-                    print(key, value)
+                    print(f"{key:<{maxw}}  ${value}")
         else:
             print("\033[31mUsage: list stores | list store <name>\033[0m")
             self.default("fail 0")
