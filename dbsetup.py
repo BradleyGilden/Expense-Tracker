@@ -12,9 +12,11 @@ BaseCmd = __import__("base-cmd").BaseCmd
 class DBSetup(BaseCmd):
     """Simple cmd interface to manage the expenses Database
     """
+    store_dict = {}
 
     def __init__(self):
-        """Constructor for the DBSetup class"""
+        """Constructor for the DBSetup class
+        """
         super().__init__()
         excpt = False
         login_details = DBSetup.generate_login()
@@ -106,7 +108,24 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     def do_list(self, line):
         """lists available stores and available items in specific stores
         """
-        print(DBSetup.store_dict)
+        args = line.split()
+        arglen = len(args)
+        if arglen > 2:
+            args[1] = ' '.join(args[1:])
+
+        if arglen == 1 and args[0] == "stores":
+            for keys in DBSetup.store_dict.keys():
+                print(keys)
+        elif arglen >= 2 and args[0] == "store":
+            if args[1] not in DBSetup.store_dict.keys():
+                print(f"\033[31mInvalid store name: {args[1]}\033[0m")
+                self.default("fail 0")
+            else:
+                for key, value in DBSetup.store_dict[args[1]].items():
+                    print(key, value)
+        else:
+            print("\033[31mUsage: list stores | list store <name>\033[0m")
+            self.default("fail 0")
 
     def do_reset(self, line):
         """deletes all table entries in a database

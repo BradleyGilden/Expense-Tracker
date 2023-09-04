@@ -11,7 +11,6 @@ class BaseCmd(cmd.Cmd):
     """Simple cmd interface to manage the expenses Database
     """
     prompt = "\033[34mExpenseTracker\033[33m<>\033[32m$\033[0m "
-    store_dict = {}
 
     def __init__(self):
         """constructor for cmd class
@@ -27,16 +26,18 @@ class BaseCmd(cmd.Cmd):
         args = line.split()
         invalid = f"""\033[41mInvalid prompt: \
 \033[47m\033[30m{args[0]}\033[0m\n"""
+        triggers = "fail 0"
 
         if args[0] == "connect":
             if args[1] == "fail" and '\n' in BaseCmd.prompt:
-                fmt = self.fdprompt.format("\033[31m\
-Connection Failed\033[33m")
-            elif args[1] == "fail":
-                fmt = self.fsprompt.format("\033[31m\
-Connection Failed\033[33m")
+                print("\033[31mConnection Failed\033[0m")
             else:
                 fmt = self.fsprompt.format("\033[32mConnected...\033[33m")
+        elif line.strip() == triggers:
+            if '\n' in BaseCmd.prompt:
+                fmt = self.fdprompt.format("\033[31mError\033[33m")
+            else:
+                fmt = self.fsprompt.format("\033[31mError\033[33m")
         elif '\n' in BaseCmd.prompt:
             print(invalid)
             fmt = self.fdprompt.format("\033[31mError\033[33m")
@@ -73,7 +74,8 @@ Connection Failed\033[33m")
         arglen = len(args)
 
         if arglen < 1 or args[0] not in {"double", "single"}:
-            print("Usage: prompt <double|single>")
+            print("\033[31mUsage: prompt <double|single>\033[0m")
+            self.default("fail 0")
         else:
             if args[0] == "single":
                 BaseCmd.prompt = self.sprompt
@@ -93,7 +95,8 @@ Connection Failed\033[33m")
         """Enables user to execute shell commands without exiting the console
         """
         if (len(line) == 0):
-            print("Usage: sh <shell cmd>")
+            print("\033[31mUsage: sh <shell cmd>\033[0m")
+            self.default("fail 0")
         else:
             os.system(line)
 
