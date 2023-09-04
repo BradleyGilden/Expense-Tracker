@@ -11,6 +11,7 @@ class BaseCmd(cmd.Cmd):
     """Simple cmd interface to manage the expenses Database
     """
     prompt = "\033[34mExpenseTracker\033[33m<>\033[32m$\033[0m "
+    store_dict = {}
 
     def __init__(self):
         """constructor for cmd class

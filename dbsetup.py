@@ -5,18 +5,19 @@ Author: Bradley Gilden
 """
 import mysql.connector
 import getpass
+from re import search, findall
 BaseCmd = __import__("base-cmd").BaseCmd
 
 
-class Console(BaseCmd):
+class DBSetup(BaseCmd):
     """Simple cmd interface to manage the expenses Database
     """
 
     def __init__(self):
-        """Constructor for the console class"""
+        """Constructor for the DBSetup class"""
         super().__init__()
         excpt = False
-        login_details = Console.generate_login()
+        login_details = DBSetup.generate_login()
         try:
             self.db = mysql.connector.connect(
                 host=login_details[0],
@@ -34,7 +35,8 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         if excpt is False:
             self.default("connect success")
             self.cursor = self.db.cursor()
-        Console.setup(self)
+        DBSetup.setup(self)
+        DBSetup.store_init()
 
     def do_db(self, line):
         """directly manipulate database
@@ -79,18 +81,44 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 );""")
 
-    @staticmethod
-    def store_init():
-        """initializes stores and store items
+    @classmethod
+    def store_init(cls):
+        """initializes store values in the store file
         """
+        store_dict = {}
+        line = ""
+        try:
+            with open("store.txt", "r") as file:
+                for line in file:
+                    line = search(r'"[^"]+"', line)
+                    line = eval(line.group())
+                    store_dict[line] = {}
+
+            with open("store.txt", "r") as file:
+                for line in file:
+                    line = findall(r'"[^"]+"', line)
+                    store_dict[eval(line[0])][eval(line[1])] = eval(line[2])
+            cls.store_dict = store_dict
+        except FileNotFoundError:
+            print("\033[31mWarning: Store file not found\033[0m")
+            exit()
+
+    def do_list(self, line):
+        """lists available stores and available items in specific stores
+        """
+        print(DBSetup.store_dict)
 
     def do_reset(self, line):
         """deletes all table entries in a database
         """
-        self.cursor.execute("DROP TABLE transactions;")
-        self.cursor.execute("DROP TABLE customers;")
-        self.db.commit()
-        Console.setup(self)
+        if line.strip() == "store":
+            DBSetup.store_init()
+        else:
+            self.cursor.execute("DROP TABLE transactions;")
+            self.cursor.execute("DROP TABLE customers;")
+            self.db.commit()
+            DBSetup.setup(self)
+            DBSetup.store_init()
 
     def do_quit(self, line):
         """Quit command to exit the program
@@ -101,4 +129,4 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
 
 
 if __name__ == '__main__':
-    Console().cmdloop()
+    DBSetup().cmdloop()
