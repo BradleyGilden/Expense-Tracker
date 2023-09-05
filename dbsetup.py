@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
-This module contains the main interface of the Expense-Tracker
+This module contains the setup of the file and mysql database that interacts
+with the Expense-Tracker
 Author: Bradley Gilden
 """
 import mysql.connector
@@ -46,8 +47,10 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         try:
             self.cursor.execute(line)
             output = self.cursor.fetchall()
-            for row in output:
-                print(row[0])
+            if output:
+                for row in output:
+                    print(row)
+            self.db.commit()
         except mysql.connector.errors.Error as e:
             print(f"\033[31m{e}\033[0m")
 
