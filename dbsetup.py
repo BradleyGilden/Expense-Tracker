@@ -60,7 +60,6 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         print("\n\033[42m************* Mysql Login **************\033[0m\n")
         login.append(input("\033[32mEnter hostname: "))
         login.append(input("\033[32mEnter user: "))
-        # Nanospartan@117
         login.append(getpass.getpass("\033[32mEnter password: "))
         return login
 
@@ -79,7 +78,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     store VARCHAR(25) DEFAULT 'General Store',
     item VARCHAR(25) NOT NULL,
     price DECIMAL(6, 2) DEFAULT 0.00,
-    customer_id INT,
+    customer_id INT NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 );""")
 
