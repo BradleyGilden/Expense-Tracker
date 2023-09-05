@@ -113,6 +113,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         if arglen > 2:
             args[1] = ' '.join(args[1:])
 
+        DBSetup.store_init()
         if arglen == 1 and args[0] == "stores":
             for keys in DBSetup.store_dict.keys():
                 print(keys)
@@ -121,7 +122,10 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
                 print(f"\033[31mInvalid store name: {args[1]}\033[0m")
                 self.default("fail 0")
             else:
+                itm = "ITEMS:"
                 maxw = max(len(i) for i in DBSetup.store_dict[args[1]].keys())
+                print(f"{itm:<{maxw}}  PRICE($):")
+                print("-"*(maxw + 11))
                 for key, value in DBSetup.store_dict[args[1]].items():
                     print(f"{key:<{maxw}}  ${value}")
         else:
@@ -131,14 +135,11 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     def do_reset(self, line):
         """deletes all table entries in a database
         """
-        if line.strip() == "store":
-            DBSetup.store_init()
-        else:
-            self.cursor.execute("DROP TABLE transactions;")
-            self.cursor.execute("DROP TABLE customers;")
-            self.db.commit()
-            DBSetup.setup(self)
-            DBSetup.store_init()
+        self.cursor.execute("DROP TABLE transactions;")
+        self.cursor.execute("DROP TABLE customers;")
+        self.db.commit()
+        DBSetup.setup(self)
+        DBSetup.store_init()
 
     def do_quit(self, line):
         """Quit command to exit the program
