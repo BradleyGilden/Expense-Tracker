@@ -73,6 +73,22 @@ class Console(DBSetup):
             print("\033[31mUsage: deposit <user> <value>\033[0m")
             self.default("fail 0")
 
+    def do_login(self, line):
+        """login as a user in order to make transactions for that user"""
+        user = line.strip()
+        select = "SELECT name FROM customers WHERE name='{}';"
+
+        if (len(user) == 0):
+            print("\033[31mUsage: login <user>\033[0m")
+        else:
+            self.cursor.execute(select.format(user))
+            output = self.cursor.fetchone()
+            if not output:
+                print(f"\033[31mUser does not exist: {user}\033[0m")
+            else:
+                self.active_user = user
+                self.default(f"user {self.active_user.split()[0]}")
+
     @staticmethod
     def valtype(string):
         """confirms datatype inside string

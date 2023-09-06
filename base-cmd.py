@@ -20,6 +20,7 @@ class BaseCmd(cmd.Cmd):
         self.fdprompt = "\033[34mExpenseTracker\033[33m<{}>\n\033[32m$\033[0m "
         self.dprompt = "\033[34mExpenseTracker\033[33m<>\n\033[32m$\033[0m "
         self.sprompt = "\033[34mExpenseTracker\033[33m<>\033[32m$\033[0m "
+        self.active_user = ""
 
     def default(self, line):
         """Handles default processing of errors"""
@@ -27,12 +28,19 @@ class BaseCmd(cmd.Cmd):
         invalid = f"""\033[41mInvalid prompt: \
 \033[47m\033[30m{args[0]}\033[0m\n"""
         triggers = "fail 0"
+        arglen = len(args)
+        user = self.active_user
 
         if args[0] == "connect":
             if args[1] == "fail" and '\n' in BaseCmd.prompt:
                 print("\033[31mConnection Failed\033[0m")
             else:
                 fmt = self.fsprompt.format("\033[32mConnected...\033[33m")
+        elif arglen == 2 and args[0] == "user" and args[1] == user.split()[0]:
+            if '\n' in BaseCmd.prompt:
+                fmt = self.fdprompt.format(f"\033[32m{user}\033[33m")
+            else:
+                fmt = self.fsprompt.format(f"\033[32m{user}\033[33m")
         elif line.strip() == triggers:
             if '\n' in BaseCmd.prompt:
                 fmt = self.fdprompt.format("\033[31mError\033[33m")
@@ -85,8 +93,13 @@ class BaseCmd(cmd.Cmd):
     def precmd(self, line):
         """Ensures default prompt is constant after error detection
         """
-        if '\n' in BaseCmd.prompt:
+        user = self.active_user
+        if '\n' in BaseCmd.prompt and user != "":
+            BaseCmd.prompt = self.fdprompt.format(f"\033[32m{user}\033[33m")
+        elif '\n' in BaseCmd.prompt:
             BaseCmd.prompt = self.dprompt
+        elif user != "":
+            BaseCmd.prompt = self.fsprompt.format(f"\033[32m{user}\033[33m")
         else:
             BaseCmd.prompt = self.sprompt
         return line
