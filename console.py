@@ -74,7 +74,8 @@ class Console(DBSetup):
             self.default("fail 0")
 
     def do_login(self, line):
-        """login as a user in order to make transactions for that user"""
+        """login as a user in order to make transactions for that user
+        """
         user = line.strip()
         select = "SELECT name FROM customers WHERE name='{}';"
 
@@ -85,9 +86,16 @@ class Console(DBSetup):
             output = self.cursor.fetchone()
             if not output:
                 print(f"\033[31mUser does not exist: {user}\033[0m")
+                self.default("fail 0")
             else:
                 self.active_user = user
                 self.default(f"user {self.active_user.split()[0]}")
+
+    def do_logout(self, line):
+        """logouts currently logged in user"""
+        self.active_user = ""
+        # reset prompt
+        self.default("")
 
     @staticmethod
     def valtype(string):

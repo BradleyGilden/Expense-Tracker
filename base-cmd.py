@@ -25,13 +25,17 @@ class BaseCmd(cmd.Cmd):
     def default(self, line):
         """Handles default processing of errors"""
         args = line.split()
-        invalid = f"""\033[41mInvalid prompt: \
-\033[47m\033[30m{args[0]}\033[0m\n"""
         triggers = "fail 0"
         arglen = len(args)
         user = self.active_user
 
-        if args[0] == "connect":
+        if args:
+            invalid = f"""\033[41mInvalid prompt: \
+\033[47m\033[30m{args[0]}\033[0m\n"""
+
+        fmt = self.dprompt if '\n' in BaseCmd.prompt else self.sprompt
+
+        if args and args[0] == "connect":
             if args[1] == "fail" and '\n' in BaseCmd.prompt:
                 print("\033[31mConnection Failed\033[0m")
             else:
@@ -46,10 +50,10 @@ class BaseCmd(cmd.Cmd):
                 fmt = self.fdprompt.format("\033[31mError\033[33m")
             else:
                 fmt = self.fsprompt.format("\033[31mError\033[33m")
-        elif '\n' in BaseCmd.prompt:
+        elif args and '\n' in BaseCmd.prompt:
             print(invalid)
             fmt = self.fdprompt.format("\033[31mError\033[33m")
-        else:
+        elif args:
             print(invalid)
             fmt = self.fsprompt.format("\033[31mError\033[33m")
         BaseCmd.prompt = fmt
