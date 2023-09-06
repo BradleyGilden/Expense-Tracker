@@ -49,28 +49,24 @@ class Console(DBSetup):
         """used to adjust current amount someone has stored in their vault
         """
         args = line.split()
+        user = self.active_user
         arglen = len(args)
-        select = "SELECT name, vault FROM customers WHERE name='{}';"
         update = "UPDATE customers SET vault = {} WHERE name = '{}'"
+        select = f"SELECT vault FROM customers WHERE name = '{user}'"
 
-        if arglen == 1:
-            print('\033[31m Value property missing\033[0m')
-            self.default('fail 0')
-        elif arglen == 2:
-            self.cursor.execute(select.format(args[0]))
+        if user != "" and arglen == 1:
+            self.cursor.execute(select)
             output = self.cursor.fetchone()
-            condition = Console.valtype(args[1])
+            condition = Console.valtype(args[0])
             if not condition:
-                print(f"\033[31mIncorrect type: {args[1]}\033[0m")
+                print(f"\033[31mIncorrect type: {args[0]}\033[0m")
                 self.default("fail 0")
-            elif output and condition:
-                value = eval(args[1]) + output[1]
-                self.cursor.execute(update.format(value, args[0]))
             else:
-                print(f"\033[31mCustomer does not exist: {args[0]}\033[0m")
-                self.default("fail 0")
+                value = eval(args[0]) + output[0]
+                self.cursor.execute(update.format(value, user))
         else:
-            print("\033[31mUsage: deposit <user> <value>\033[0m")
+            print("""\033[31mPlease login as a user before depositing or \
+use the correct format: deposit <value>\033[0m""")
             self.default("fail 0")
 
     def do_login(self, line):
