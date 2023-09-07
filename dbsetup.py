@@ -74,6 +74,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS customers(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
+    card CHAR(16) NOT NULL,
     vault DECIMAL(9, 2) DEFAULT 0.00
 );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS transactions(
@@ -112,6 +113,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         """
         args = line.split()
         arglen = len(args)
+        select = "SELECT name FROM customers;"
+        message = """\033[31mUsage: list users | list stores | list store \
+<name>\033[0m"""
         if arglen > 2:
             args[1] = ' '.join(args[1:])
 
@@ -119,6 +123,11 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         if arglen == 1 and args[0] == "stores":
             for keys in DBSetup.store_dict.keys():
                 print(keys)
+        elif arglen == 1 and args[0] == "users":
+            self.cursor.execute(select)
+            output = self.cursor.fetchall()
+            for row in output:
+                print(row[0])
         elif arglen >= 2 and args[0] == "store":
             if args[1] not in DBSetup.store_dict.keys():
                 print(f"\033[31mInvalid store name: {args[1]}\033[0m")
@@ -131,7 +140,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
                 for key, value in DBSetup.store_dict[args[1]].items():
                     print(f"{key:<{maxw}}  ${value}")
         else:
-            print("\033[31mUsage: list stores | list store <name>\033[0m")
+            print(message)
             self.default("fail 0")
 
     def do_reset(self, line):

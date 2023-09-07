@@ -10,40 +10,33 @@ class Console(DBSetup):
     """Creates an interface to easily calculate expenses of users
     """
 
-    def do_add(self, line):
+    def do_signup(self, line):
         """adds user to customer database
         """
-        args = line.split()
-        arglen = len(args)
-        insert = "INSERT INTO customers (name) VALUES ('{}');"
-        insert2 = "INSERT INTO customers (name, vault) VALUES ('{}', {});"
-        select = "SELECT name FROM customers WHERE name='{}';"
-        update = "UPDATE customers SET vault = {} WHERE name = '{}'"
+        insert = "INSERT INTO customers (name, card) VALUES ('{}', '{}');"
+        title = """\033[1m\033[46m\033[30m************* User Signup \
+*************\033[0m"""
+        userin = """\033[36mUsername (\033[3mletters only\033[0m\033[36): \
+\033[0m"""
+        cardin = "\033[36mCard No. (\033[3mpassword\033[0m\033[36): \033[0m"
+        select = "SELECT name FROM customers where name = '{}'"
+        exists = True
 
-        if arglen == 1:
-            self.cursor.execute(select.format(args[0]))
-            output = self.cursor.fetchall()
-            if not output:
-                self.cursor.execute(insert.format(args[0]))
-            else:
-                print(f"\033[31mUser {args[0]} already exists")
-                self.default("fail 0")
-        elif arglen == 2:
-            self.cursor.execute(select.format(args[0]))
-            output = self.cursor.fetchall()
-            condition = Console.valtype(args[1])
-            if not output and condition:
-                self.cursor.execute(insert2.format(args[0], args[1]))
-                self.db.commit()
-            elif output and condition:
-                self.cursor.execute(update.format(args[1], args[0]))
-                self.db.commit()
-            else:
-                print(f"\033[31mIncorrect type: {args[1]}\033[0m")
-                self.default("fail 0")
+        user = input(userin).strip()
+        if not user.isalpha():
+            print("\033[31m Please Enter Valid Username [letters only]")
         else:
-            print("\033[31mUsage: add <user> | add <user> <value>\033[0m")
-            self.default("fail 0")
+            while exists:
+                self.cursor.execute(select.format(user))
+                output = self.cursor.fetchone()
+                if output:
+                    print(f"\033[31mUsername taken: {user}\033[0m")
+                else:
+                    exists = False
+        card = input(cardin).strip()
+        
+
+
 
     def do_deposit(self, line):
         """used to adjust current amount someone has stored in their vault
