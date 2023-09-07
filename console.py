@@ -4,6 +4,8 @@ This module contains the main interface of the Expense-Tracker
 Author: Bradley Gilden
 """
 from dbsetup import DBSetup
+from re import split as resplit
+from dbsetup import search as research
 
 
 class Console(DBSetup):
@@ -15,28 +17,42 @@ class Console(DBSetup):
         """
         insert = "INSERT INTO customers (name, card) VALUES ('{}', '{}');"
         title = """\033[1m\033[46m\033[30m************* User Signup \
-*************\033[0m"""
-        userin = """\033[36mUsername (\033[3mletters only\033[0m\033[36): \
+*************\033[0m\n"""
+        userin = """\033[36mUsername (\033[3mletters only\033[0m\033[36m): \
 \033[0m"""
-        cardin = "\033[36mCard No. (\033[3mpassword\033[0m\033[36): \033[0m"
+        cardin = "\033[36mCard No. (\033[3m16 digits\033[0m\033[36m): \033[0m"
         select = "SELECT name FROM customers where name = '{}'"
+        invalid_user = "\033[31m Please Enter Valid Username [letters only]"
+        invalid_card = "\033[31mPlease Enter a Valid Card Number\033[0m"
         exists = True
 
-        user = input(userin).strip()
-        if not user.isalpha():
-            print("\033[31m Please Enter Valid Username [letters only]")
-        else:
+        print(title)
+        try:
             while exists:
+                user = input(userin).strip()
                 self.cursor.execute(select.format(user))
                 output = self.cursor.fetchone()
                 if output:
                     print(f"\033[31mUsername taken: {user}\033[0m")
+                elif not research(r'[a-zA-Z ]+', user):
+                    print(invalid_user)
                 else:
                     exists = False
-        card = input(cardin).strip()
-        
-
-
+            if not exists:
+                exists = True
+                while exists:
+                    card = input(cardin).strip()
+                    card = resplit(r'[- ]', card)
+                    card = ''.join(card)
+                    if not card.isdigit() or len(card) != 16:
+                        print(invalid_card)
+                    else:
+                        self.cursor.execute(insert.format(user, card))
+                        self.db.commit()
+                        exists = False
+        except KeyboardInterrupt:
+            print()
+            self.default('')
 
     def do_deposit(self, line):
         """used to adjust current amount someone has stored in their vault

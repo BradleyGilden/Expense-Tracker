@@ -60,10 +60,15 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         """
         login = []
 
-        print("\n\033[42m************* Mysql Login **************\033[0m\n")
-        login.append(input("\033[32mEnter hostname: "))
-        login.append(input("\033[32mEnter user: "))
-        login.append(getpass.getpass("\033[32mEnter password: "))
+        try:
+            print("""\n\033[42m************* Mysql Login \
+**************\033[0m\n""")
+            login.append(input("\033[32mEnter hostname: "))
+            login.append(input("\033[32mEnter user: "))
+            login.append(getpass.getpass("\033[32mEnter password: "))
+        except KeyboardInterrupt:
+            print()
+            exit()
         return login
 
     def setup(self):
