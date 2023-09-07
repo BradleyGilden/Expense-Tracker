@@ -5,6 +5,21 @@ Author: Bradley Gilden
 """
 import cmd
 import os
+from sys import stdin as STDIN
+
+
+class _Wrapper:
+    """Wrapper class helps catch any ctr+c signals from input
+    """
+    def __init__(self, fd):
+        self.fd = fd
+
+    def readline(self, *args):
+        try:
+            return self.fd.readline(*args)
+        except KeyboardInterrupt:
+            print()
+            return '\n'
 
 
 class BaseCmd(cmd.Cmd):
@@ -15,7 +30,8 @@ class BaseCmd(cmd.Cmd):
     def __init__(self):
         """constructor for cmd class
         """
-        super().__init__()
+        super().__init__(stdin=_Wrapper(STDIN))
+        self.use_rawinput = False
         self.fsprompt = "\033[34mExpenseTracker\033[33m<{}>\033[32m$\033[0m "
         self.fdprompt = "\033[34mExpenseTracker\033[33m<{}>\n\033[32m$\033[0m "
         self.dprompt = "\033[34mExpenseTracker\033[33m<>\n\033[32m$\033[0m "

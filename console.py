@@ -81,26 +81,52 @@ use the correct format: deposit <value>\033[0m""")
     def do_login(self, line):
         """login as a user in order to make transactions for that user
         """
-        user = line.strip()
-        select = "SELECT name FROM customers WHERE name='{}';"
+        args = line.split()
+        select = "SELECT name, card FROM customers WHERE name = '{}';"
+        arglen = len(args)
+        invalid_card = "\033[31mCard Format Invalid\033[0m"
+        bad_entry = "\033[31mPlease add correct card number or username\033[0m"
 
-        if (len(user) == 0):
-            print("\033[31mUsage: login <user>\033[0m")
+        if (arglen <= 1):
+            print("\033[31mUsage: login <user> <card no.>\033[0m")
+            self.default("fault 0")
         else:
+            user = args[:arglen - 1]
+            user = ' '.join(user)
+            card = args[arglen - 1]
+            card = resplit(r'[-]', card)
+            card = ''.join(card)
             self.cursor.execute(select.format(user))
             output = self.cursor.fetchone()
             if not output:
-                print(f"\033[31mUser does not exist: {user}\033[0m")
+                print(bad_entry)
                 self.default("fail 0")
+            elif not card.isdigit() or len(card) != 16:
+                print(invalid_card)
+            elif card != output[1]:
+                print("\033[31mCard does not match username\033[0m")
             else:
                 self.active_user = user
                 self.default(f"user {self.active_user.split()[0]}")
 
     def do_logout(self, line):
-        """logouts currently logged in user"""
+        """logouts currently logged in user
+        """
         self.active_user = ""
         # reset prompt
         self.default("")
+
+    def do_balance(self, line):
+        """checks user balance
+        """
+        user = self.active_user
+        select = f"SELECT card, vault FROM customers where name = '{user}'"
+        if user == "":
+            print("\033[31mPlease login first before checking balance\033[0m")
+        else:
+            self.cursor.execute(select)
+            output = self.cursor.fetchone()
+            print(f"{user}\t************{output[0][12:]}\t${output[1]}")
 
     @staticmethod
     def valtype(string):
