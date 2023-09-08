@@ -84,9 +84,10 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
 );""")
         self.cursor.execute("""CREATE TABLE IF NOT EXISTS transactions(
     id INT PRIMARY KEY AUTO_INCREMENT,
-    store VARCHAR(25) DEFAULT 'General Store',
+    store VARCHAR(25) NOT NULL,
     item VARCHAR(25) NOT NULL,
     price DECIMAL(6, 2) DEFAULT 0.00,
+    purchase_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     customer_id INT NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id)
 );""")
