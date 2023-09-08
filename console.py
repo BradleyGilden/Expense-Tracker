@@ -81,33 +81,45 @@ use the correct format: deposit <value>\033[0m""")
     def do_login(self, line):
         """login as a user in order to make transactions for that user
         """
-        args = line.split()
         select = "SELECT name, card FROM customers WHERE name = '{}';"
-        arglen = len(args)
         invalid_card = "\033[31mCard Format Invalid\033[0m"
-        bad_entry = "\033[31mPlease add correct card number or username\033[0m"
+    # bad_entry = "\033[31mPlease add correct card number or username\033[0m"
+        title = """\033[1m\033[46m\033[30m************* User Login \
+*************\033[0m\n"""
+        userin = """\033[36mUsername (\033[3mletters only\033[0m\033[36m): \
+\033[0m"""
+        cardin = "\033[36mCard No. (\033[3m16 digits\033[0m\033[36m): \033[0m"
+        exists = True
 
-        if (arglen <= 1):
-            print("\033[31mUsage: login <user> <card no.>\033[0m")
-            self.default("fault 0")
-        else:
-            user = args[:arglen - 1]
-            user = ' '.join(user)
-            card = args[arglen - 1]
-            card = resplit(r'[-]', card)
-            card = ''.join(card)
-            self.cursor.execute(select.format(user))
-            output = self.cursor.fetchone()
-            if not output:
-                print(bad_entry)
-                self.default("fail 0")
-            elif not card.isdigit() or len(card) != 16:
-                print(invalid_card)
-            elif card != output[1]:
-                print("\033[31mCard does not match username\033[0m")
-            else:
-                self.active_user = user
-                self.default(f"user {self.active_user.split()[0]}")
+        print(title)
+        try:
+            while exists:
+                user = input(userin).strip()
+                self.cursor.execute(select.format(user))
+                output = self.cursor.fetchone()
+                if not output:
+                    print(f"\033[31mUsername does not exist: {user}\033[0m")
+                else:
+                    exists = False
+            if not exists:
+                exists = True
+                while exists:
+                    card = input(cardin).strip()
+                    card = resplit(r'[- ]', card)
+                    card = ''.join(card)
+                    self.cursor.execute(select.format(user))
+                    output = self.cursor.fetchone()
+                    if not card.isdigit() or len(card) != 16:
+                        print(invalid_card)
+                    elif card != output[1]:
+                        print("\033[31mCard does not match username\033[0m")
+                    else:
+                        self.active_user = user
+                        self.default(f"user {self.active_user.split()[0]}")
+                        exists = False
+        except KeyboardInterrupt:
+            print()
+            self.default('')
 
     def do_logout(self, line):
         """logouts currently logged in user
