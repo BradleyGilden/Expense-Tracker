@@ -22,6 +22,7 @@ class Console(DBSetup):
 \033[0m"""
         cardin = "\033[36mCard No. (\033[3m16 digits\033[0m\033[36m): \033[0m"
         select = "SELECT name FROM customers where name = '{}'"
+        select2 = "SELECT card FROM customers where card = '{}'"
         invalid_user = "\033[31m Please Enter Valid Username [letters only]"
         invalid_card = "\033[31mPlease Enter a Valid Card Number\033[0m"
         exists = True
@@ -47,9 +48,14 @@ class Console(DBSetup):
                     if not card.isdigit() or len(card) != 16:
                         print(invalid_card)
                     else:
-                        self.cursor.execute(insert.format(user, card))
-                        self.db.commit()
-                        exists = False
+                        self.cursor.execute(select2.format(card))
+                        output = self.cursor.fetchone()
+                        if output:
+                            print(f"\033[31mCard already taken: {card}\033[0m")
+                        else:
+                            self.cursor.execute(insert.format(user, card))
+                            self.db.commit()
+                            exists = False
         except KeyboardInterrupt:
             print()
             self.default('')
