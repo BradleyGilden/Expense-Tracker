@@ -79,6 +79,7 @@ class Console(DBSetup):
             else:
                 value = eval(args[0]) + output[0]
                 self.cursor.execute(update.format(value, user))
+                self.db.commit()
         else:
             print("""\033[31mPlease login as a user before depositing or \
 use the correct format: deposit <value>\033[0m""")
@@ -138,7 +139,7 @@ use the correct format: deposit <value>\033[0m""")
         """checks user balance
         """
         user = self.active_user
-        select = f"SELECT card, vault FROM customers where name = '{user}'"
+        select = f"SELECT card, vault FROM customers where name = '{user}';"
         if user == "":
             print("\033[31mPlease login first before checking balance\033[0m")
         else:
@@ -157,6 +158,53 @@ use the correct format: deposit <value>\033[0m""")
             return (type(value) == int or type(value) == float)
         except (SyntaxError, ValueError, NameError, TypeError):
             return False
+
+    def do_purchase(self, line):
+        """allows users to purchase specific items from any store in the
+text store database
+        """
+        title = """\033[1m\033[45m\033[30m************* Purchase Menu \
+*************\033[0m\n"""
+        no_user = "\033[31mPlease login before purchasing an item\033[0m"
+        store_msg = "\033[35mEnter Store Name: \033[0m"
+        invalid_store = "\033[31mStore does not exist\033[0m"
+        invalid_item = "\033[31mItem does not exist\033[0m"
+        item_msg = "\033[35mEnter Item Name: \033[0m"
+        insert = "INSERT INTO transactions (store, item, price, customer_id) \
+        VALUES ('{}', '{}', {}, {});"
+        update = "UPDATE customers SET vault = {} WHERE name = '{}'"
+        get_balance = "SELECT id, vault FROM customers WHERE name = '{}';"
+        if self.active_user == "":
+            print(no_user)
+            return False
+        condition = True
+
+        print(title)
+        while condition:
+            store = input(store_msg).strip()
+            if store in Console.store_dict.keys():
+                condition = False
+            else:
+                print(invalid_store)
+
+        condition = True
+        while condition:
+            item = input(item_msg).strip()
+            if item in Console.store_dict[store].keys():
+                condition = False
+            else:
+                print(invalid_item)
+
+        self.cursor.execute(get_balance.format(self.active_user))
+        info = self.cursor.fetchone()
+        balance = float(info[1])
+        cost = float(Console.store_dict[store][item])
+        if balance < cost:
+            print("\033[31minsufficient balance\033[0m")
+            return False
+        self.cursor.execute(insert.format(store, item, cost, info[0]))
+        self.cursor.execute(update.format((balance - cost), self.active_user))
+        self.db.commit()
 
 
 if __name__ == '__main__':
