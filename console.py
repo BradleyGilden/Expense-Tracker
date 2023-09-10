@@ -204,9 +204,11 @@ text store database
                 break
             try:
                 quantity = int(quantity)
+                if quantity <= 0:
+                    raise ValueError
                 condition = False
-            except ValueError as e:
-                print(f"\033[31m{e}]\033[0m")
+            except ValueError:
+                print("\033[31m PLease use positive whole numbers\033[0m")
 
         self.cursor.execute(get_balance.format(self.active_user))
         info = self.cursor.fetchone()
