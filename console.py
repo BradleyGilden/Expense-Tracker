@@ -175,40 +175,45 @@ text store database
         VALUES ('{}', '{}', {}, {});"
         update = "UPDATE customers SET vault = {} WHERE name = '{}'"
         get_balance = "SELECT id, vault FROM customers WHERE name = '{}';"
+
         if self.active_user == "":
             print(no_user)
             return False
         condition = True
 
         print(title)
-        while condition:
-            store = input(store_msg).strip()
-            if store in Console.store_dict.keys():
-                condition = False
-            else:
-                print(invalid_store)
+        try:
+            while condition:
+                store = input(store_msg).strip()
+                if store in Console.store_dict.keys():
+                    condition = False
+                else:
+                    print(invalid_store)
 
-        condition = True
-        while condition:
-            item = input(item_msg).strip()
-            if item in Console.store_dict[store].keys():
-                condition = False
-            else:
-                print(invalid_item)
+            condition = True
+            while condition:
+                item = input(item_msg).strip()
+                if item in Console.store_dict[store].keys():
+                    condition = False
+                else:
+                    print(invalid_item)
 
-        condition = True
-        while condition:
-            quantity = input(quantity_msg).strip()
-            if quantity == "":
-                quantity = 1
-                break
-            try:
-                quantity = int(quantity)
-                if quantity <= 0:
-                    raise ValueError
-                condition = False
-            except ValueError:
-                print("\033[31m PLease use positive whole numbers\033[0m")
+            condition = True
+            while condition:
+                quantity = input(quantity_msg).strip()
+                if quantity == "":
+                    quantity = 1
+                    break
+                try:
+                    quantity = int(quantity)
+                    if quantity <= 0:
+                        raise ValueError
+                    condition = False
+                except ValueError:
+                    print("\033[31m PLease use positive whole numbers\033[0m")
+        except KeyboardInterrupt:
+            print()
+            return False
 
         self.cursor.execute(get_balance.format(self.active_user))
         info = self.cursor.fetchone()
@@ -223,6 +228,57 @@ text store database
         self.db.commit()
         print("Amount spent: ${:.2f}\nBalance: ${:.2f}".format(float(cost),
               float(balance - cost)))
+
+    def do_receipt(self, line):
+        """prints a receipt of all expenses made by the user
+        """
+        user = self.active_user
+        id_select = "SELECT id FROM customers WHERE name = '{}';"
+        grp_select = """SELECT store FROM transactions WHERE customer_id = {} \
+GROUP BY store;"""
+        itm_select = """SELECT item FROM transactions WHERE customer_id = {} \
+AND store = '{}' GROUP BY item;"""
+        cquery = """SELECT COUNT(item) FROM transactions WHERE customer_id = \
+{} AND item = '{}'"""
+        cardquery = f"SELECT card FROM customers where name = '{user}';"
+        total = 0
+
+        if user == "":
+            print("\033[31mPlease log in before viewing a receipt\033[0m")
+            return False
+        self.cursor.execute(id_select.format(user))
+        id = self.cursor.fetchone()
+        id = id[0]
+        self.cursor.execute(grp_select.format(id))
+        stores = self.cursor.fetchall()
+        if stores:
+            stores = [store[0] for store in stores]
+
+        print(f"""\033[1m\033[42m\033[30m************* Receipt of {user} \
+**************\033[0m\n""")
+        for store in stores:
+            print("\033[32m Merchant:\033[0m", store)
+            self.cursor.execute(itm_select.format(id, store))
+            items = self.cursor.fetchall()
+            items = [item[0] for item in items]
+            print("\033[32m Items Purchased:\033[0m")
+            for item in items:
+                print("\033[36m Item:\033[0m", item)
+                self.cursor.execute(cquery.format(id, item))
+                count = self.cursor.fetchone()
+                count = int(count[0])
+                print("\033[36m Quantity:\033[0m", count)
+                price = float(Console.store_dict[store][item])
+                print("\033[36m Unit Price:\033[0m", price)
+                subtotal = price * count
+                print("\033[36m Subtotal:\033[0m", subtotal)
+                total += subtotal
+                print()
+        print("\033[32mTotal Amount:\033[0m", total)
+        self.cursor.execute(cardquery)
+        card = self.cursor.fetchone()[0]
+        print(f"\033[32mPayment Method:\033[0m Card ending in ************\
+{card[12:]}")
 
 
 if __name__ == '__main__':
