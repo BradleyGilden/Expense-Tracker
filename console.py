@@ -167,6 +167,7 @@ text store database
 *************\033[0m\n"""
         no_user = "\033[31mPlease login before purchasing an item\033[0m"
         store_msg = "\033[35mEnter Store Name: \033[0m"
+        quantity_msg = "\033[35mQuantity: \033[0m"
         invalid_store = "\033[31mStore does not exist\033[0m"
         invalid_item = "\033[31mItem does not exist\033[0m"
         item_msg = "\033[35mEnter Item Name: \033[0m"
@@ -195,16 +196,31 @@ text store database
             else:
                 print(invalid_item)
 
+        condition = True
+        while condition:
+            quantity = input(quantity_msg).strip()
+            if quantity == "":
+                quantity = 1
+                break
+            try:
+                quantity = int(quantity)
+                condition = False
+            except ValueError as e:
+                print(f"\033[31m{e}]\033[0m")
+
         self.cursor.execute(get_balance.format(self.active_user))
         info = self.cursor.fetchone()
         balance = float(info[1])
         cost = float(Console.store_dict[store][item])
+        cost *= quantity
         if balance < cost:
             print("\033[31minsufficient balance\033[0m")
             return False
         self.cursor.execute(insert.format(store, item, cost, info[0]))
         self.cursor.execute(update.format((balance - cost), self.active_user))
         self.db.commit()
+        print("Amount spent: ${:.2f}\nBalance: ${:.2f}".format(float(cost),
+              float(balance - cost)))
 
 
 if __name__ == '__main__':
