@@ -42,7 +42,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         DBSetup.store_init()
 
     def do_db(self, line):
-        """directly manipulate database"""
+        """directly manipulate database
+        Usage: db <query>
+        """
         try:
             self.cursor.execute(line)
             output = self.cursor.fetchall()
@@ -150,7 +152,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
             self.default("fail 0")
 
     def do_reset(self, line):
-        """deletes all table entries in a database"""
+        """deletes all table entries in a database
+        Usage: reset | reset store
+        """
         self.cursor.execute("DROP TABLE transactions;")
         self.cursor.execute("DROP TABLE customers;")
         self.db.commit()
