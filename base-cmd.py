@@ -78,7 +78,9 @@ class BaseCmd(cmd.Cmd):
         pass
 
     def do_clear(self, line):
-        """clears terminal screen"""
+        """clears terminal screen
+        Usage: clear
+        """
         os.system("cls" if os.name == "nt" else "clear")
 
     def do_EOF(self, line):
@@ -87,11 +89,15 @@ class BaseCmd(cmd.Cmd):
         return True
 
     def do_quit(self, line):
-        """Quit command to exit the program"""
+        """Quit command to exit the program
+        Usage: quit
+        """
         return True
 
     def do_prompt(self, line):
-        """Changes prompt orientation"""
+        """Changes prompt orientation
+        Usage: prompt <single|double>
+        """
         args = line.split()
         arglen = len(args)
 
@@ -119,6 +125,7 @@ class BaseCmd(cmd.Cmd):
 
     def do_sh(self, line):
         """Enables user to execute shell commands without exiting the console
+        Usage: sh <command>
         """
         if len(line) == 0:
             print("\033[31mUsage: sh <shell cmd>\033[0m")
