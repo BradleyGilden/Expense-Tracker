@@ -69,6 +69,7 @@ This project has the following prerequisites:
   > Install:
   ```
   pip3 install mysql-connector
+  pip3 install --upgrade mysql-connector-python
   ```
 
 ## Running The Program
