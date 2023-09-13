@@ -9,12 +9,10 @@ from dbsetup import search as research
 
 
 class Console(DBSetup):
-    """Creates an interface to easily calculate expenses of users
-    """
+    """Creates an interface to easily calculate expenses of users"""
 
     def do_signup(self, line):
-        """adds user to customer database
-        """
+        """adds user to customer database"""
         insert = "INSERT INTO customers (name, card) VALUES ('{}', '{}');"
         title = """\033[1m\033[46m\033[30m************* User Signup \
 *************\033[0m\n"""
@@ -35,7 +33,7 @@ class Console(DBSetup):
                 output = self.cursor.fetchone()
                 if output:
                     print(f"\033[31mUsername taken: {user}\033[0m")
-                elif not research(r'[a-zA-Z ]+', user):
+                elif not research(r"[a-zA-Z ]+", user):
                     print(invalid_user)
                 else:
                     exists = False
@@ -43,8 +41,8 @@ class Console(DBSetup):
                 exists = True
                 while exists:
                     card = input(cardin).strip()
-                    card = resplit(r'[- ]', card)
-                    card = ''.join(card)
+                    card = resplit(r"[- ]", card)
+                    card = "".join(card)
                     if not card.isdigit() or len(card) != 16:
                         print(invalid_card)
                     else:
@@ -58,11 +56,10 @@ class Console(DBSetup):
                             exists = False
         except KeyboardInterrupt:
             print()
-            self.default('')
+            self.default("")
 
     def do_deposit(self, line):
-        """used to adjust current amount someone has stored in their vault
-        """
+        """used to adjust current amount someone has stored in their vault"""
         args = line.split()
         user = self.active_user
         arglen = len(args)
@@ -81,16 +78,16 @@ class Console(DBSetup):
                 self.cursor.execute(update.format(value, user))
                 self.db.commit()
         else:
-            print("""\033[31mPlease login as a user before depositing or \
-use the correct format: deposit <value>\033[0m""")
+            print(
+                """\033[31mPlease login as a user before depositing or \
+use the correct format: deposit <value>\033[0m"""
+            )
             self.default("fail 0")
 
     def do_login(self, line):
-        """login as a user in order to make transactions for that user
-        """
+        """login as a user in order to make transactions for that user"""
         select = "SELECT name, card FROM customers WHERE name = '{}';"
         invalid_card = "\033[31mCard Format Invalid\033[0m"
-    # bad_entry = "\033[31mPlease add correct card number or username\033[0m"
         title = """\033[1m\033[46m\033[30m************* User Login \
 *************\033[0m\n"""
         userin = """\033[36mUsername (\033[3mletters only\033[0m\033[36m): \
@@ -112,8 +109,8 @@ use the correct format: deposit <value>\033[0m""")
                 exists = True
                 while exists:
                     card = input(cardin).strip()
-                    card = resplit(r'[- ]', card)
-                    card = ''.join(card)
+                    card = resplit(r"[- ]", card)
+                    card = "".join(card)
                     self.cursor.execute(select.format(user))
                     output = self.cursor.fetchone()
                     if not card.isdigit() or len(card) != 16:
@@ -126,18 +123,16 @@ use the correct format: deposit <value>\033[0m""")
                         exists = False
         except KeyboardInterrupt:
             print()
-            self.default('')
+            self.default("")
 
     def do_logout(self, line):
-        """logouts currently logged in user
-        """
+        """logouts currently logged in user"""
         self.active_user = ""
         # reset prompt
         self.default("")
 
     def do_balance(self, line):
-        """checks user balance
-        """
+        """checks user balance"""
         user = self.active_user
         select = f"SELECT card, vault FROM customers where name = '{user}';"
         if user == "":
@@ -149,19 +144,18 @@ use the correct format: deposit <value>\033[0m""")
 
     @staticmethod
     def valtype(string):
-        """confirms datatype inside string
-        """
+        """confirms datatype inside string"""
         if type(string) != str:
             False
         try:
             value = eval(string)
-            return (type(value) == int or type(value) == float)
+            return type(value) == int or type(value) == float
         except (SyntaxError, ValueError, NameError, TypeError):
             return False
 
     def do_purchase(self, line):
         """allows users to purchase specific items from any store in the
-text store database
+        text store database
         """
         title = """\033[1m\033[45m\033[30m************* Purchase Menu \
 *************\033[0m\n"""
@@ -226,12 +220,14 @@ text store database
         self.cursor.execute(insert.format(store, item, cost, info[0]))
         self.cursor.execute(update.format((balance - cost), self.active_user))
         self.db.commit()
-        print("Amount spent: ${:.2f}\nBalance: ${:.2f}".format(float(cost),
-              float(balance - cost)))
+        print(
+            "Amount spent: ${:.2f}\nBalance: ${:.2f}".format(
+                float(cost), float(balance - cost)
+            )
+        )
 
     def do_receipt(self, line):
-        """prints a receipt of all expenses made by the user
-        """
+        """prints a receipt of all expenses made by the user"""
         user = self.active_user
         id_select = "SELECT id FROM customers WHERE name = '{}';"
         grp_select = """SELECT store FROM transactions WHERE customer_id = {} \
@@ -254,8 +250,10 @@ AND store = '{}' GROUP BY item;"""
         if stores:
             stores = [store[0] for store in stores]
 
-        print(f"""\033[1m\033[42m\033[30m************* Receipt of {user} \
-**************\033[0m\n""")
+        print(
+            f"""\033[1m\033[42m\033[30m************* Receipt of {user} \
+**************\033[0m\n"""
+        )
         for store in stores:
             print("\033[32m Merchant:\033[0m", store)
             self.cursor.execute(itm_select.format(id, store))
@@ -277,9 +275,11 @@ AND store = '{}' GROUP BY item;"""
         print("\033[32mTotal Amount:\033[0m", total)
         self.cursor.execute(cardquery)
         card = self.cursor.fetchone()[0]
-        print(f"\033[32mPayment Method:\033[0m Card ending in ************\
-{card[12:]}")
+        print(
+            f"\033[32mPayment Method:\033[0m Card ending in ************\
+{card[12:]}"
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     Console().cmdloop()

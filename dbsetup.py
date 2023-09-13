@@ -7,17 +7,17 @@ Author: Bradley Gilden
 import mysql.connector
 import getpass
 from re import search, findall
+
 BaseCmd = __import__("base-cmd").BaseCmd
 
 
 class DBSetup(BaseCmd):
-    """Simple cmd interface to manage the expenses Database
-    """
+    """Simple cmd interface to manage the expenses Database"""
+
     store_dict = {}
 
     def __init__(self):
-        """Constructor for the DBSetup class
-        """
+        """Constructor for the DBSetup class"""
         super().__init__()
         excpt = False
         login_details = DBSetup.generate_login()
@@ -25,7 +25,7 @@ class DBSetup(BaseCmd):
             self.db = mysql.connector.connect(
                 host=login_details[0],
                 user=login_details[1],
-                passwd=login_details[2]
+                passwd=login_details[2],
             )
         except (Exception, mysql.connector.Error) as e:
             err = f"""\033[41m Database Connection Failed:\033[47m\033[30m{e} \
@@ -42,8 +42,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         DBSetup.store_init()
 
     def do_db(self, line):
-        """directly manipulate database
-        """
+        """directly manipulate database"""
         try:
             self.cursor.execute(line)
             output = self.cursor.fetchall()
@@ -56,13 +55,14 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
 
     @staticmethod
     def generate_login() -> list:
-        """accepts user login details for mysql database
-        """
+        """accepts user login details for mysql database"""
         login = []
 
         try:
-            print("""\n\033[1m\033[42m\033[30m************* Mysql Login \
-**************\033[0m\n""")
+            print(
+                """\n\033[1m\033[42m\033[30m************* Mysql Login \
+**************\033[0m\n"""
+            )
             login.append(input("\033[32mEnter hostname: "))
             login.append(input("\033[32mEnter user: "))
             login.append(getpass.getpass("\033[32mEnter password: "))
@@ -72,29 +72,31 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         return login
 
     def setup(self):
-        """creates necessary table and database
-        """
+        """creates necessary table and database"""
         self.cursor.execute("CREATE DATABASE IF NOT EXISTS expenses")
         self.cursor.execute("USE expenses")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS customers(
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS customers(
     id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL,
     card CHAR(16) NOT NULL,
     vault DECIMAL(9, 2) DEFAULT 0.00
-);""")
-        self.cursor.execute("""CREATE TABLE IF NOT EXISTS transactions(
+);"""
+        )
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS transactions(
     id INT PRIMARY KEY AUTO_INCREMENT,
     store VARCHAR(25) NOT NULL,
     item VARCHAR(25) NOT NULL,
     price DECIMAL(6, 2) DEFAULT 0.00,
     customer_id INT NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id)
-);""")
+);"""
+        )
 
     @classmethod
     def store_init(cls):
-        """initializes store values in the store file
-        """
+        """initializes store values in the store file"""
         store_dict = {}
         line = ""
         try:
@@ -114,15 +116,14 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
             exit()
 
     def do_list(self, line):
-        """lists available stores and available items in specific stores
-        """
+        """lists available stores and available items in specific stores"""
         args = line.split()
         arglen = len(args)
         select = "SELECT name FROM customers;"
         message = """\033[31mUsage: list users | list stores | list store \
 <name>\033[0m"""
         if arglen > 2:
-            args[1] = ' '.join(args[1:])
+            args[1] = " ".join(args[1:])
 
         DBSetup.store_init()
         if arglen == 1 and args[0] == "stores":
@@ -141,7 +142,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
                 itm = "ITEMS:"
                 maxw = max(len(i) for i in DBSetup.store_dict[args[1]].keys())
                 print(f"{itm:<{maxw}}  PRICE($):")
-                print("-"*(maxw + 11))
+                print("-" * (maxw + 11))
                 for key, value in DBSetup.store_dict[args[1]].items():
                     print(f"{key:<{maxw}}  ${value}")
         else:
@@ -149,8 +150,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
             self.default("fail 0")
 
     def do_reset(self, line):
-        """deletes all table entries in a database
-        """
+        """deletes all table entries in a database"""
         self.cursor.execute("DROP TABLE transactions;")
         self.cursor.execute("DROP TABLE customers;")
         self.db.commit()
@@ -158,12 +158,11 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
         DBSetup.store_init()
 
     def do_quit(self, line):
-        """Quit command to exit the program
-        """
+        """Quit command to exit the program"""
         self.cursor.close()
         self.db.close()
         return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     DBSetup().cmdloop()

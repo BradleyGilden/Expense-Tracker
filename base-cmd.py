@@ -9,8 +9,8 @@ from sys import stdin as STDIN
 
 
 class _Wrapper:
-    """Wrapper class helps catch any ctr+c signals from input
-    """
+    """Wrapper class helps catch any ctr+c signals from input"""
+
     def __init__(self, fd):
         self.fd = fd
 
@@ -19,17 +19,16 @@ class _Wrapper:
             return self.fd.readline(*args)
         except KeyboardInterrupt:
             print()
-            return '\n'
+            return "\n"
 
 
 class BaseCmd(cmd.Cmd):
-    """Simple cmd interface to manage the expenses Database
-    """
+    """Simple cmd interface to manage the expenses Database"""
+
     prompt = "\033[34mExpenseTracker\033[33m<>\033[32m$\033[0m "
 
     def __init__(self):
-        """constructor for cmd class
-        """
+        """constructor for cmd class"""
         super().__init__(stdin=_Wrapper(STDIN))
         self.use_rawinput = False
         self.fsprompt = "\033[34mExpenseTracker\033[33m<{}>\033[32m$\033[0m "
@@ -49,24 +48,24 @@ class BaseCmd(cmd.Cmd):
             invalid = f"""\033[41mInvalid prompt: \
 \033[47m\033[30m{args[0]}\033[0m\n"""
 
-        fmt = self.dprompt if '\n' in BaseCmd.prompt else self.sprompt
+        fmt = self.dprompt if "\n" in BaseCmd.prompt else self.sprompt
 
         if args and args[0] == "connect":
-            if args[1] == "fail" and '\n' in BaseCmd.prompt:
+            if args[1] == "fail" and "\n" in BaseCmd.prompt:
                 print("\033[31mConnection Failed\033[0m")
             else:
                 fmt = self.fsprompt.format("\033[32mConnected...\033[33m")
         elif arglen == 2 and args[0] == "user" and args[1] == user.split()[0]:
-            if '\n' in BaseCmd.prompt:
+            if "\n" in BaseCmd.prompt:
                 fmt = self.fdprompt.format(f"\033[32m{user}\033[33m")
             else:
                 fmt = self.fsprompt.format(f"\033[32m{user}\033[33m")
         elif line.strip() == triggers:
-            if '\n' in BaseCmd.prompt:
+            if "\n" in BaseCmd.prompt:
                 fmt = self.fdprompt.format("\033[31mError\033[33m")
             else:
                 fmt = self.fsprompt.format("\033[31mError\033[33m")
-        elif args and '\n' in BaseCmd.prompt:
+        elif args and "\n" in BaseCmd.prompt:
             print(invalid)
             fmt = self.fdprompt.format("\033[31mError\033[33m")
         elif args:
@@ -75,29 +74,24 @@ class BaseCmd(cmd.Cmd):
         BaseCmd.prompt = fmt
 
     def emptyline(self):
-        """Behaviour when an emptyline is encountered
-        """
+        """Behaviour when an emptyline is encountered"""
         pass
 
     def do_clear(self, line):
-        """clears terminal screen
-        """
-        os.system('cls' if os.name == 'nt' else 'clear')
+        """clears terminal screen"""
+        os.system("cls" if os.name == "nt" else "clear")
 
     def do_EOF(self, line):
-        """Handles EOF signal by exiting the Shell
-        """
+        """Handles EOF signal by exiting the Shell"""
         print()
         return True
 
     def do_quit(self, line):
-        """Quit command to exit the program
-        """
+        """Quit command to exit the program"""
         return True
 
     def do_prompt(self, line):
-        """Changes prompt orientation
-        """
+        """Changes prompt orientation"""
         args = line.split()
         arglen = len(args)
 
@@ -111,12 +105,11 @@ class BaseCmd(cmd.Cmd):
                 BaseCmd.prompt = self.dprompt
 
     def precmd(self, line):
-        """Ensures default prompt is constant after error detection
-        """
+        """Ensures default prompt is constant after error detection"""
         user = self.active_user
-        if '\n' in BaseCmd.prompt and user != "":
+        if "\n" in BaseCmd.prompt and user != "":
             BaseCmd.prompt = self.fdprompt.format(f"\033[32m{user}\033[33m")
-        elif '\n' in BaseCmd.prompt:
+        elif "\n" in BaseCmd.prompt:
             BaseCmd.prompt = self.dprompt
         elif user != "":
             BaseCmd.prompt = self.fsprompt.format(f"\033[32m{user}\033[33m")
@@ -125,14 +118,13 @@ class BaseCmd(cmd.Cmd):
         return line
 
     def do_sh(self, line):
-        """Enables user to execute shell commands without exiting the console
-        """
-        if (len(line) == 0):
+        """Enables user to execute shell commands without exiting the console"""
+        if len(line) == 0:
             print("\033[31mUsage: sh <shell cmd>\033[0m")
             self.default("fail 0")
         else:
             os.system(line)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     BaseCmd().cmdloop()
