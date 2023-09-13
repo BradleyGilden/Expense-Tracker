@@ -9,7 +9,9 @@ from dbsetup import search as research
 
 
 class Console(DBSetup):
-    """Creates an interface to easily calculate expenses of users"""
+    """Creates an interface to easily calculate expenses of users
+    Usage: signup
+    """
 
     def do_signup(self, line):
         """adds user to customer database"""
@@ -59,7 +61,9 @@ class Console(DBSetup):
             self.default("")
 
     def do_deposit(self, line):
-        """used to adjust current amount someone has stored in their vault"""
+        """used to adjust current amount someone has stored in their vault
+        Usage: deposit value
+        """
         args = line.split()
         user = self.active_user
         arglen = len(args)
@@ -85,7 +89,9 @@ use the correct format: deposit <value>\033[0m"""
             self.default("fail 0")
 
     def do_login(self, line):
-        """login as a user in order to make transactions for that user"""
+        """login as a user in order to make transactions for that user
+        Usage: login
+        """
         select = "SELECT name, card FROM customers WHERE name = '{}';"
         invalid_card = "\033[31mCard Format Invalid\033[0m"
         title = """\033[1m\033[46m\033[30m************* User Login \
@@ -126,13 +132,17 @@ use the correct format: deposit <value>\033[0m"""
             self.default("")
 
     def do_logout(self, line):
-        """logouts currently logged in user"""
+        """logouts currently logged in user
+        Usage: logout
+        """
         self.active_user = ""
         # reset prompt
         self.default("")
 
     def do_balance(self, line):
-        """checks user balance"""
+        """checks user balance
+        Usage: balance
+        """
         user = self.active_user
         select = f"SELECT card, vault FROM customers where name = '{user}';"
         if user == "":
@@ -155,7 +165,8 @@ use the correct format: deposit <value>\033[0m"""
 
     def do_purchase(self, line):
         """allows users to purchase specific items from any store in the
-        text store database
+text store database
+        Usage: purchase
         """
         title = """\033[1m\033[45m\033[30m************* Purchase Menu \
 *************\033[0m\n"""
@@ -227,7 +238,9 @@ use the correct format: deposit <value>\033[0m"""
         )
 
     def do_receipt(self, line):
-        """prints a receipt of all expenses made by the user"""
+        """prints a receipt of all expenses made by the user
+        Usage: receipt
+        """
         user = self.active_user
         id_select = "SELECT id FROM customers WHERE name = '{}';"
         grp_select = """SELECT store FROM transactions WHERE customer_id = {} \
