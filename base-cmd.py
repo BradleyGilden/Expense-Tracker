@@ -118,7 +118,8 @@ class BaseCmd(cmd.Cmd):
         return line
 
     def do_sh(self, line):
-        """Enables user to execute shell commands without exiting the console"""
+        """Enables user to execute shell commands without exiting the console
+        """
         if len(line) == 0:
             print("\033[31mUsage: sh <shell cmd>\033[0m")
             self.default("fail 0")
