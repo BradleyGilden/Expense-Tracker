@@ -78,7 +78,7 @@ class Console(DBSetup):
                 print(f"\033[31mIncorrect type: {args[0]}\033[0m")
                 self.default("fail 0")
             else:
-                value = eval(args[0]) + output[0]
+                value = float(eval(args[0])) + float(output[0])
                 self.cursor.execute(update.format(value, user))
                 self.db.commit()
         else:
