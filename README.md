@@ -4,11 +4,11 @@
 
 ## Index:
 
-* #### [Description](#description)
-* #### [Dependencies](#dependencies)
-* #### [Running The Program](#running-the-program)
-* #### [Description](#description)
-* #### [Description](#description)
+* #### [Description](#description-1)
+* #### [Dependencies](#dependencies-1)
+* #### [Running The Program](#running-the-program-1)
+* #### [Signup & Login](#signup--login-1)
+* #### [Basic Commands](#description)
 * #### [Description](#description)
 * #### [Description](#description)
 * #### [Description](#description)
@@ -74,4 +74,41 @@ This project has the following prerequisites:
 
 ## Running The Program
 
-To run the program: `./console.py`
+* Ensure mysql service is running: `sudo service mysql start`
+* To run the program: `./console.py`
+* Database login example:
+  ```
+  $ ./console
+  
+  ************* Mysql Login **************
+  
+  Enter hostname: localhost
+  Enter user: root
+  Enter password:
+  ExpenseTracker<Connected...>$
+  ```
+
+## Signup & Login
+
+This is an important step as you will not be able to make purchases or check your balance without loging in as a user. To signup as an user, use the command `signup`:
+```
+ExpenseTracker<>$ signup
+************* User Signup *************
+
+Username (letters only): Walter White
+Card No. (16 digits): 8765 4321 2342 1267 
+```
+likewise to login use the command `login`:
+```
+ExpenseTracker<>$ login 
+************* User Login *************
+
+Username (letters only): Walter White
+Card No. (16 digits): 8765 4321 2342 1267
+ExpenseTracker<Walter White>$ 
+```
+N.B allowed card formats:
+
+* 0000-0000-0000-0000
+* 0000 0000 0000 0000
+* 0000000000000000
