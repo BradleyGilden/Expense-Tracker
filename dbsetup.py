@@ -83,7 +83,7 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     name VARCHAR(50) NOT NULL,
     card CHAR(16) NOT NULL,
     vault DECIMAL(9, 2) DEFAULT 0.00
-);"""
+) ENGINE=InnoDB;"""
         )
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS transactions(
@@ -93,7 +93,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
     price DECIMAL(6, 2) DEFAULT 0.00,
     customer_id INT NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customers(id)
-);"""
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB;"""
         )
 
     @classmethod
