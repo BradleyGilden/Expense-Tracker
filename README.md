@@ -9,7 +9,7 @@
 * #### [Running The Program](#running-the-program-1)
 * #### [Signup & Login](#signup--login-1)
 * #### [Terminal Interaction Commands](#terminal-interaction-commands-1)
-* #### [Description](#description)
+* #### [Global Commands](#description)
 * #### [Description](#description)
 * #### [Description](#description)
 * #### [Description](#description)
@@ -74,7 +74,7 @@ This project has the following prerequisites:
 
 ## Running The Program
 
-* Ensure mysql service is running: `sudo service mysql start`
+* Ensure MySQL service is running: `sudo service mysql start`
 * To run the program: `./console.py`
 * Database login example:
   ```
@@ -90,7 +90,7 @@ This project has the following prerequisites:
 
 ## Signup & Login
 
-This is an important step as you will not be able to make purchases or check your balance without loging in as a user. To signup as an user, use the command `signup`:
+This is an important step as you will not be able to make purchases or check your balance without logging in as a user. To signup as an user, use the command `signup`:
 ```
 ExpenseTracker<>$ signup
 ************* User Signup *************
@@ -107,7 +107,7 @@ Username (letters only): Walter White
 Card No. (16 digits): 8765 4321 2342 1267
 ExpenseTracker<Walter White>$ 
 ```
-To logut a user account, simply type `logout`:
+To logout a user account, simply type `logout`:
 ```
 ExpenseTracker<Walter White>$ logout
 ExpenseTracker<>$ 
@@ -119,6 +119,8 @@ N.B allowed card formats:
 * 0000000000000000
 
 ## Terminal Interaction Commands
+
+These are commands that are used to navigate the shell or not part of the program's primary functionality
 
 * Shell Commands start with `sh`:
 ```
@@ -171,4 +173,46 @@ ExpenseTracker<>$ help list
 lists available stores and available items in specific stores
         Usage: list users | list stores | list store <name>
 ```
+
+## Global Commands
+
+Global Commands are commands that are not user specific, as you do not need
+to be logged in as a user to execute these commands
+
+* The command: `list` has many uses such as:
+  * `list users` -> lists users that have accounts
+  ```
+  ExpenseTracker<>$ list users
+  Turid Ozil
+  Magne Lorrel
+  James Dashner
+  Ezio Auditore De Firenze
+  ```
+  * `list stores` -> list available stores in txt database
+  ```
+  ExpenseTracker<>$ list stores
+  Spark Electronics
+  Carlos Grocers
+  Dripped Out
+  ```
+  * `list store <store name>` -> list items in a particular store
+  ```
+  ExpenseTracker<>$ list store Spark Electronics
+  ITEMS:                 PRICE($):
+  --------------------------------
+  Raspberry Pi Pico      $8.00
+  Arduino Uno            $12.99
+  ESP8266 WiFi Module    $3.49
+  16x2 LCD Display       $4.95
+  Raspberry Pi 4         $45.00
+  Arduino Nano           $6.75
+  ESP32 Development Kit  $15.99
+  OLED Display Module    $9.50
+  Arduino Mega 2560      $19.95
+  NodeMCU ESP8266        $5.99
+  ```
+  N.B listing a store will automatically refresh the stores contents if you were to add any rows
+
+* The command `reset` will reset all data in database hence deleting all users and their transactions. `reset store` will refresh all the store items if any new entries were added or old ones were deleted
+
 
