@@ -107,6 +107,11 @@ Username (letters only): Walter White
 Card No. (16 digits): 8765 4321 2342 1267
 ExpenseTracker<Walter White>$ 
 ```
+To logut a user account, simply type `logout`:
+```
+ExpenseTracker<Walter White>$ logout
+ExpenseTracker<>$ 
+```
 N.B allowed card formats:
 
 * 0000-0000-0000-0000
@@ -141,6 +146,11 @@ ExpenseTracker<>$ ^C
 ExpenseTracker<>$ ^C
 ExpenseTracker<>$ 
 ```
+* To view database with raw SQL commands use the start command with `db`:
+```
+ExpenseTracker<>$ db select * from expenses;
+(1, 'Lucy Greyhart', '1234567891011121', Decimal('455.35'))
+```
 
 * To exit the interface type `quit` or enter CTRL+D:
 ```
@@ -161,3 +171,4 @@ ExpenseTracker<>$ help list
 lists available stores and available items in specific stores
         Usage: list users | list stores | list store <name>
 ```
+
