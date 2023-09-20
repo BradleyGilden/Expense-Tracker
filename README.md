@@ -8,7 +8,7 @@
 * #### [Dependencies](#dependencies-1)
 * #### [Running The Program](#running-the-program-1)
 * #### [Signup & Login](#signup--login-1)
-* #### [Basic Commands](#description)
+* #### [Terminal Interaction Commands](#terminal-interaction-commands-1)
 * #### [Description](#description)
 * #### [Description](#description)
 * #### [Description](#description)
@@ -112,3 +112,52 @@ N.B allowed card formats:
 * 0000-0000-0000-0000
 * 0000 0000 0000 0000
 * 0000000000000000
+
+## Terminal Interaction Commands
+
+* Shell Commands start with `sh`:
+```
+ExpenseTracker<>$ sh ls -l
+total 52
+-rw-r--r-- 1 nightlock nightlock  2895 Sep 20 19:07 README.md
+drwxr-xr-x 2 nightlock nightlock  4096 Sep 19 10:33 __pycache__
+-rwxr-xr-x 1 nightlock nightlock  4401 Sep 13 17:36 base-cmd.py
+-rwxr-xr-x 1 nightlock nightlock 11295 Sep 18 21:08 console.py
+-rwxr-xr-x 1 nightlock nightlock  5706 Sep 19 10:30 dbsetup.py
+drwxr-xr-x 2 nightlock nightlock  4096 Sep 18 21:10 images
+-rw-r--r-- 1 nightlock nightlock    53 Sep 19 10:34 raw.sql
+-rw-r--r-- 1 nightlock nightlock  1644 Sep 10 20:28 store.txt
+-rw-r--r-- 1 nightlock nightlock   249 Sep  9 09:55 testdata.txt
+```
+
+* To clear the interface just type `clear`
+```
+ExpenseTracker<>$ clear
+```
+* To cancel input enter CTRL+C
+```
+ExpenseTracker<>$ purcase^C
+ExpenseTracker<>$ ^C
+ExpenseTracker<>$ ^C
+ExpenseTracker<>$ 
+```
+
+* To exit the interface type `quit` or enter CTRL+D:
+```
+ExpenseTracker<>$ quit
+$
+```
+* For any help with commands just type `help` or `help <cmd>`
+
+```
+ExpenseTracker<>$ help
+
+Documented commands (type help <topic>):
+========================================
+EOF      clear  deposit  list   logout  purchase  receipt  sh    
+balance  db     help     login  prompt  quit      reset    signup
+
+ExpenseTracker<>$ help list
+lists available stores and available items in specific stores
+        Usage: list users | list stores | list store <name>
+```
