@@ -10,7 +10,7 @@
 * #### [Signup & Login](#signup--login-1)
 * #### [Terminal Interaction Commands](#terminal-interaction-commands-1)
 * #### [Global Commands](#global-commands-1)
-* #### [>>> *Tracking Your Expenses* <<<](#tracking-your-expenses-1)
+* #### [>>> *Tracking Your Expenses* <<<](#tracking-your-expenses)
 * #### [Authors & Licencing](#authors--licencing-1)
 
 

@@ -28,3 +28,4 @@
 "Dripped Out"   "Men's Slim-Fit Suit"         "129.99"
 "Dripped Out"   "Fashion Sunglasses"          "12.95"
 "Dripped Out"   "Knit Beanie Hat"             "9.99"
+"Fresh Kicks"   "Designer Laces"                    "2.59"

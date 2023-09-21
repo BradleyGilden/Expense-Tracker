@@ -107,9 +107,9 @@ imporatantly if mysql service is running e.g sudo service mysql status"""
             with open("store.txt", "r") as file:
                 for line in file:
                     line = search(r'"[^"]+"', line)
-					if line is not None:
-						line = eval(line.group())
-						store_dict[line] = {}
+                    if line is not None:
+                        line = eval(line.group())
+                        store_dict[line] = {}
 
             with open("store.txt", "r") as file:
                 for line in file:
