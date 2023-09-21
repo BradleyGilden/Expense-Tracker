@@ -6,6 +6,10 @@ Author: Bradley Gilden
 from dbsetup import DBSetup
 from re import split as resplit
 from dbsetup import search as research
+import locale
+
+# Set the locale to U.S. English
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 
 class Console(DBSetup):
@@ -150,7 +154,16 @@ use the correct format: deposit <value>\033[0m"""
         else:
             self.cursor.execute(select)
             output = self.cursor.fetchone()
-            print(f"{user}\t************{output[0][12:]}\t${output[1]}")
+            currency = self.mformat(output[1])
+            print(f"{user}\t************{output[0][12:]}\t{currency}")
+
+    @staticmethod
+    def mformat(price) -> str:
+        """takes in a float and returns a string in US dollar format"""
+        if type(price) in [str, int]:
+            return locale.currency(float(price), grouping=True)
+        else:
+            return locale.currency(price, grouping=True)
 
     @staticmethod
     def valtype(string):
@@ -224,16 +237,18 @@ text store database
         info = self.cursor.fetchone()
         balance = float(info[1])
         cost = float(Console.store_dict[store][item])
+        retail = cost
         cost *= quantity
         if balance < cost:
             print("\033[31minsufficient balance\033[0m")
             return False
-        self.cursor.execute(insert.format(store, item, cost, info[0]))
+        for _ in range(quantity):
+            self.cursor.execute(insert.format(store, item, retail, info[0]))
         self.cursor.execute(update.format((balance - cost), self.active_user))
         self.db.commit()
         print(
-            "Amount spent: ${:.2f}\nBalance: ${:.2f}".format(
-                float(cost), float(balance - cost)
+            "Amount spent: {}\nBalance: {}".format(
+                self.mformat(cost), self.mformat(balance - cost)
             )
         )
 
@@ -280,12 +295,12 @@ AND store = '{}' GROUP BY item;"""
                 count = int(count[0])
                 print("\033[36m Quantity:\033[0m", count)
                 price = float(Console.store_dict[store][item])
-                print("\033[36m Unit Price:\033[0m", price)
+                print("\033[36m Unit Price:\033[0m", self.mformat(price))
                 subtotal = price * count
-                print("\033[36m Subtotal:\033[0m", subtotal)
+                print("\033[36m Subtotal:\033[0m", self.mformat(subtotal))
                 total += subtotal
                 print()
-        print("\033[32mTotal Amount:\033[0m", total)
+        print("\033[32mTotal Amount:\033[0m", self.mformat(total))
         self.cursor.execute(cardquery)
         card = self.cursor.fetchone()[0]
         print(

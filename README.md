@@ -1,5 +1,5 @@
 <h1 align="center">Expense-Tracker</h1>
-
+<br>
 <p align="center"><img src="images/mysql-official.svg" height=140><img src="images/plus-60.png" height=140><img src="images/1869px-Python-logo-notext.svg.png" height=140></p>
 
 ## Index:
@@ -9,10 +9,9 @@
 * #### [Running The Program](#running-the-program-1)
 * #### [Signup & Login](#signup--login-1)
 * #### [Terminal Interaction Commands](#terminal-interaction-commands-1)
-* #### [Global Commands](#description)
-* #### [Description](#description)
-* #### [Description](#description)
-* #### [Description](#description)
+* #### [Global Commands](#global-commands-1)
+* #### [>>> *Tracking Your Expenses* <<<](#tracking-your-expenses-1)
+* #### [Authors & Licencing](#authors--licencing-1)
 
 
 ## Description
@@ -215,4 +214,76 @@ to be logged in as a user to execute these commands
 
 * The command `reset` will reset all data in database hence deleting all users and their transactions. `reset store` will refresh all the store items if any new entries were added or old ones were deleted
 
+## Tracking Your Expenses
 
+To track a Users expenses, you first have to [signup and/or login](#signup--login-1) as a user to execute commands to track a specific users expenses
+
+All stores, their item list and their prices are stored in [store.txt](store.txt). The format for a store entry is: <br>
+`"<store name>" "<store item>" "<store price>"`. You can add or delete entries in the store.txt file although make sure to refresh your edits by using:  `reset store` or `list stores`
+
+### Commands:
+
+* `balance` ->  Displays A users current balance
+```
+ExpenseTracker<Cedric Diggory>$ balance
+Cedric Diggory  ************2983        $22,340.23
+```
+* `deposit` -> Allows user to deposit money in their account
+```
+ExpenseTracker<Cedric Diggory>$ deposit 10000
+ExpenseTracker<Cedric Diggory>$ balance
+Cedric Diggory  ************2983        $32,340.23
+```
+
+* `purchase` -> Allows user to make purchases. Note: if no quantity is entered it automatically assumes a quantity of 1
+```
+ExpenseTracker<Cedric Diggory>$ purchase
+************* Purchase Menu *************
+
+Enter Store Name: Spark Electronics
+Enter Item Name: Raspberry Pi Pico 
+Quantity: 8
+Amount spent: $64.00
+Balance: $32,276.23
+```
+
+* `receipt` -> prints out receipt of all the purchases of a user
+```
+ExpenseTracker<Cedric Diggory>$ receipt
+************* Receipt of Cedric Diggory **************
+
+ Merchant: Spark Electronics
+ Items Purchased:
+ Item: Raspberry Pi Pico
+ Quantity: 8
+ Unit Price: $8.00
+ Subtotal: $64.00
+
+ Item: Arduino Uno
+ Quantity: 2
+ Unit Price: $12.99
+ Subtotal: $25.98
+
+ Merchant: Dripped Out
+ Items Purchased:
+ Item: Baseball Cap
+ Quantity: 3
+ Unit Price: $14.50
+ Subtotal: $43.50
+
+ Item: Athletic Sneakers
+ Quantity: 1
+ Unit Price: $59.99
+ Subtotal: $59.99
+
+Total Amount: $193.47
+Payment Method: Card ending in ************2983
+```
+
+<hr>
+
+## Authors & Licencing
+
+| Authors          | Licencing           |
+|------------------|---------------------|
+|[AUTHORS](AUTHORS)| [Licence](liscence/)|
