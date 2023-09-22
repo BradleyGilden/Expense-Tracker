@@ -286,4 +286,4 @@ Payment Method: Card ending in ************2983
 
 | Authors          | Licencing           |
 |------------------|---------------------|
-|[AUTHORS](AUTHORS)| [Licence](liscence/)|
+|[AUTHORS](AUTHORS)| [Licence](licence/)|
